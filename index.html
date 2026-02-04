@@ -139,6 +139,42 @@
       border-color: rgba(59,130,246,0.9);
     }
 
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.35);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: none;
+      z-index: 40;
+    }
+    .sheet-backdrop.active {
+      display: block;
+    }
+    .sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: -100%;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 -18px 45px rgba(15, 23, 42, 0.35);
+      padding: 16px 16px 24px;
+      max-height: 70vh;
+      overflow-y: auto;
+      transition: transform 0.25s ease, bottom 0.25s ease;
+      z-index: 50;
+    }
+    .dark .sheet {
+      background: rgba(15, 23, 42, 0.96);
+    }
+    .sheet.active {
+      bottom: 0;
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .fade-page,
       .score-pop,
@@ -158,7 +194,7 @@
         <div class="flex items-center gap-2">
           <span id="backFromCharts"
                 class="hidden text-sm text-blue-500 font-semibold cursor-pointer select-none">
-            ‹ Back
+            ‹ Tracker
           </span>
         </div>
         <div class="text-center flex-1">
@@ -233,7 +269,21 @@
               </div>
             </div>
 
-            <div id="eventsList" class="flex flex-col gap-3 overflow-y-auto pr-1"></div>
+            <div class="overflow-x-auto rounded-2xl border border-white/40 bg-white/40 dark:bg-slate-800/60 flex-1 min-h-0 w-full">
+              <table class="w-full border-collapse text-sm">
+                <thead class="bg-white/70 dark:bg-slate-900/70">
+                  <tr class="text-left text-slate-700 dark:text-slate-200">
+                    <th class="p-2">Time</th>
+                    <th class="p-2">Type</th>
+                    <th class="p-2">Category</th>
+                    <th class="p-2">Points</th>
+                    <th class="p-2">Notes</th>
+                    <th class="p-2">Delete</th>
+                  </tr>
+                </thead>
+                <tbody id="eventsTableBody" class="bg-white/40 dark:bg-slate-900/40"></tbody>
+              </table>
+            </div>
           </section>
 
         </div>
@@ -297,62 +347,6 @@
           </section>
         </div>
 
-        <!-- ADD BEHAVIOUR PAGE -->
-        <div id="addPage" class="fade-page hidden flex-col gap-4 sm:gap-5 h-full">
-          <div class="flex items-center gap-2">
-            <span id="backFromAdd" class="text-sm text-blue-500 font-semibold cursor-pointer select-none">
-              ‹ Back
-            </span>
-          </div>
-
-          <h2 class="text-base sm:text-lg font-semibold">Add Behaviour</h2>
-
-          <form id="eventForm" class="glass-card p-4 sm:p-5 flex flex-col gap-4">
-            <div>
-              <label class="block text-xs sm:text-sm font-medium mb-1">Behaviour Type</label>
-              <div class="flex gap-4">
-                <label class="flex items-center gap-1 text-sm">
-                  <input type="radio" name="type" value="positive" checked>
-                  <span>Positive</span>
-                </label>
-                <label class="flex items-center gap-1 text-sm">
-                  <input type="radio" name="type" value="negative">
-                  <span>Negative</span>
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs sm:text-sm font-medium mb-1">Category</label>
-              <select id="category"
-                      class="border border-white/60 bg-white/60 dark:bg-slate-800/80 rounded-full px-3 py-2 w-full text-sm shadow-inner">
-                <option>Helping</option>
-                <option>Homework</option>
-                <option>Kindness</option>
-                <option>Not listening</option>
-                <option>Rudeness</option>
-              </select>
-            </div>
-
-            <div>
-              <label class="block text-xs sm:text-sm font-medium mb-1">Points</label>
-              <input id="points" type="number" value="1"
-                     class="border border-white/60 bg-white/60 dark:bg-slate-800/80 rounded-full px-3 py-2 w-full text-sm shadow-inner">
-            </div>
-
-            <div>
-              <label class="block text-xs sm:text-sm font-medium mb-1">Notes</label>
-              <input id="notes" type="text" placeholder="Notes (optional)"
-                     class="border border-white/60 bg-white/60 dark:bg-slate-800/80 rounded-full px-3 py-2 w-full text-sm shadow-inner">
-            </div>
-
-            <button
-              class="bg-blue-600 text-white px-4 py-2.5 rounded-full w-full text-sm sm:text-base font-medium shadow-md active:scale-95 transition">
-              Add Behaviour
-            </button>
-          </form>
-        </div>
-
       </main>
     </div>
   </div>
@@ -370,6 +364,74 @@
     <button id="tabReport" class="floating-btn" title="Weekly Report">
       <span>📝</span>
     </button>
+  </div>
+
+  <div id="sheetBackdrop" class="sheet-backdrop"></div>
+  <div id="addSheet" class="sheet">
+    <div class="w-12 h-1.5 bg-slate-300 dark:bg-slate-600 rounded-full mx-auto mb-3"></div>
+    <h2 class="text-base sm:text-lg font-semibold mb-3">Add Behaviour</h2>
+
+    <form id="eventForm" class="space-y-3 sm:space-y-4">
+      <div>
+        <label class="block text-xs sm:text-sm font-medium mb-1">Behaviour Type</label>
+        <div class="flex flex-wrap gap-4">
+          <label class="flex items-center gap-1 text-sm">
+            <input type="radio" name="type" value="positive" checked>
+            <span>Positive</span>
+          </label>
+          <label class="flex items-center gap-1 text-sm">
+            <input type="radio" name="type" value="negative">
+            <span>Negative</span>
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label for="category" class="block text-xs sm:text-sm font-medium mb-1">Category</label>
+        <select id="category"
+                class="border border-white/60 bg-white/60 dark:bg-slate-800/80 dark:border-slate-600 rounded-full px-3 py-2 w-full sm:w-auto sm:min-w-[150px] text-sm shadow-inner">
+          <option>Helping</option>
+          <option>Homework</option>
+          <option>Kindness</option>
+          <option>Not listening</option>
+          <option>Rudeness</option>
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label for="points" class="block text-xs sm:text-sm font-medium mb-1">Points</label>
+          <input id="points" type="number" value="1"
+                 class="border border-white/60 bg-white/60 dark:bg-slate-800/80 dark:border-slate-600 rounded-full px-3 py-2 w-full text-sm shadow-inner">
+        </div>
+
+        <div>
+          <label for="notes" class="block text-xs sm:text-sm font-medium mb-1">Notes</label>
+          <input id="notes" type="text" placeholder="Notes (optional)"
+                 class="border border-white/60 bg-white/60 dark:bg-slate-800/80 dark:border-slate-600 rounded-full px-3 py-2 w-full text-sm shadow-inner">
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2 text-xs sm:text-sm">
+        <button type="button" data-quick="positive:Kindness:1"
+                class="px-3 py-1.5 rounded-full bg-emerald-500/90 text-white shadow">
+          +1 Kindness
+        </button>
+        <button type="button" data-quick="positive:Homework:1"
+                class="px-3 py-1.5 rounded-full bg-sky-500/90 text-white shadow">
+          +1 Homework
+        </button>
+        <button type="button" data-quick="negative:Rudeness:1"
+                class="px-3 py-1.5 rounded-full bg-rose-500/90 text-white shadow">
+          -1 Rudeness
+        </button>
+      </div>
+
+      <button
+        class="mt-1 bg-blue-600 text-white px-4 py-2.5 rounded-full w-full text-sm sm:text-base font-medium shadow-md active:scale-95 transition">
+        Add Behaviour
+      </button>
+    </form>
   </div>
 
   <div id="updateBanner"
