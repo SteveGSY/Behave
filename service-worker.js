@@ -1,12 +1,14 @@
-const CACHE_NAME = "behave-cache-v1";
+// service-worker.js
+const CACHE_NAME = "behave-cache-v2"; // Incremented version to force update of new icons
 
 const ASSETS = [
   "/Behave/",
   "/Behave/index.html",
   "/Behave/manifest.json",
   "/Behave/service-worker.js",
-  "/Behave/icon-192.png",
-  "/Behave/icon-512.png",
+  "/Behave/apple-touch-icon.png", // Updated to .png
+  "/Behave/icon-192.png",         // Updated to .png
+  "/Behave/icon-512.png",         // Updated to .png
   "/Behave/js/storage.js",
   "/Behave/js/events.js",
   "/Behave/js/charts.js",
@@ -50,6 +52,7 @@ self.addEventListener("fetch", event => {
       .then(response => {
         const clone = response.clone();
         const ct = response.headers.get("content-type") || "";
+        // Don't cache the main HTML so users always get the latest version if online
         if (!ct.includes("text/html")) {
           caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
         }
