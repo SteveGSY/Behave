@@ -5,12 +5,14 @@
   <title>Home Behaviour Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
+  <base href="/Behave/">
+
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="/Behave/manifest.json">
   <meta name="theme-color" content="#ffffff">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="/Behave/icon-192.png">
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -440,12 +442,12 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script type="module">
-    import { initStorage } from "./js/storage.js";
-    import { initEvents } from "./js/events.js";
-    import { initCharts } from "./js/charts.js";
-    import { initUI } from "./js/ui.js";
-    import { initGestures } from "./js/gestures.js";
-    import { initPWA } from "./js/pwa.js";
+    import { initStorage } from "/Behave/js/storage.js";
+    import { initEvents } from "/Behave/js/events.js";
+    import { initCharts } from "/Behave/js/charts.js";
+    import { initUI } from "/Behave/js/ui.js";
+    import { initGestures } from "/Behave/js/gestures.js";
+    import { initPWA } from "/Behave/js/pwa.js";
 
     document.addEventListener("DOMContentLoaded", async () => {
       const state = await initStorage();
