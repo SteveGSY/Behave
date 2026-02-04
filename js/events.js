@@ -91,11 +91,6 @@ export function initEvents(state) {
       prevDate = date;
     });
 
-    const todayKey = new Date().toISOString().slice(0, 10);
-    if (!map.has(todayKey)) {
-      // current already correct
-    }
-
     return { current, best, positiveDays };
   }
 
