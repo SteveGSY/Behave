@@ -97,11 +97,12 @@ export function initEvents(state) {
   function getAchievements(streaks, scores) {
     const list = [];
 
-    if (streaks.best >= 3) list.push("🔥 3+ day streak");
+    // Updated Emojis for better display
+    if (streaks.best >= 3) list.push("⭐ 3+ day streak");
     if (streaks.best >= 7) list.push("🏆 7+ day streak");
-    if (scores.today >= 5) list.push("⭐ Great day (5+ points)");
-    if (scores.week >= 20) list.push("🌈 Strong week (20+ points)");
-    if (scores.total >= 100) list.push("🎉 100+ total points");
+    if (scores.today >= 5) list.push("🔥 Great day (5+ points)");
+    if (scores.week >= 20) list.push("💪 Strong week (20+ points)");
+    if (scores.total >= 100) list.push("💎 100+ total points");
 
     return list;
   }
