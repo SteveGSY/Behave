@@ -1,18 +1,18 @@
-const CACHE_NAME = "behaviour-tracker-v2";
+const CACHE_NAME = "behave-cache-v1";
 
 const ASSETS = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./service-worker.js",
-  "./icon-192.png",
-  "./icon-512.png",
-  "./js/storage.js",
-  "./js/events.js",
-  "./js/charts.js",
-  "./js/ui.js",
-  "./js/gestures.js",
-  "./js/pwa.js",
+  "/Behave/",
+  "/Behave/index.html",
+  "/Behave/manifest.json",
+  "/Behave/service-worker.js",
+  "/Behave/icon-192.png",
+  "/Behave/icon-512.png",
+  "/Behave/js/storage.js",
+  "/Behave/js/events.js",
+  "/Behave/js/charts.js",
+  "/Behave/js/ui.js",
+  "/Behave/js/gestures.js",
+  "/Behave/js/pwa.js",
   "https://cdn.tailwindcss.com",
   "https://cdn.jsdelivr.net/npm/chart.js"
 ];
@@ -49,7 +49,10 @@ self.addEventListener("fetch", event => {
     fetch(request)
       .then(response => {
         const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+        const ct = response.headers.get("content-type") || "";
+        if (!ct.includes("text/html")) {
+          caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+        }
         return response;
       })
       .catch(() => caches.match(request))
